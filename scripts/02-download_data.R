@@ -40,11 +40,4 @@ for (artist in names(artists)) {
 }
 
 
-
-
-#### Save data ####
-# [...UPDATE THIS...]
-# change the_raw_data to whatever name you assigned when you downloaded it.
-# write_csv(the_raw_data, "data/01-raw_data/.csv") 
-
          
