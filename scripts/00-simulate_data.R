@@ -1,52 +1,37 @@
 #### Preamble ####
-# Purpose: Simulates a dataset of Australian electoral divisions, including the 
-  #state and party that won each division.
-# Author: Rohan Alexander
-# Date: 26 September 2024
-# Contact: rohan.alexander@utoronto.ca
+# Purpose: Simulates artist danceability data
+# Author: Daniel Du
+# Date: 10 October 2024
+# Contact: danielc.du@mail.utoronto.ca
 # License: MIT
 # Pre-requisites: The `tidyverse` package must be installed
-# Any other information needed? Make sure you are in the `starter_folder` rproj
+# Any other information needed? Make sure you are in the `Spotify Analysis` rproj
 
 
 #### Workspace setup ####
 library(tidyverse)
-set.seed(853)
+set.seed(304) 
 
+# Parameters
+num_entries_per_artist <- 50  # Number of entries per artist
+artists <- c("A", "B", "C")
+date_range <- seq.Date(from = as.Date("2020-01-01"), by = "month", length.out = num_entries_per_artist)
 
-#### Simulate data ####
-# State names
-states <- c(
-  "New South Wales",
-  "Victoria",
-  "Queensland",
-  "South Australia",
-  "Western Australia",
-  "Tasmania",
-  "Northern Territory",
-  "Australian Capital Territory"
-)
-
-# Political parties
-parties <- c("Labor", "Liberal", "Greens", "National", "Other")
-
-# Create a dataset by randomly assigning states and parties to divisions
-analysis_data <- tibble(
-  division = paste("Division", 1:151),  # Add "Division" to make it a character
-  state = sample(
-    states,
-    size = 151,
-    replace = TRUE,
-    prob = c(0.25, 0.25, 0.15, 0.1, 0.1, 0.1, 0.025, 0.025) # Rough state population distribution
-  ),
-  party = sample(
-    parties,
-    size = 151,
-    replace = TRUE,
-    prob = c(0.40, 0.40, 0.05, 0.1, 0.05) # Rough party distribution
+# Generate data for each artist
+data_list <- list()
+for (artist in artists) {
+  danceability <- runif(num_entries_per_artist, min = 0.4, max = 0.9)  # Random values between 0.4 and 0.9
+  data_list[[artist]] <- data.frame(
+    date = date_range,
+    artist = artist,
+    danceability = danceability
   )
-)
+}
 
+# Combine all artist data into one data frame
+danceability_df <- do.call(rbind, data_list)
+row.names(danceability_df) <- NULL
 
-#### Save data ####
-write_csv(analysis_data, "data/00-simulated_data/simulated_data.csv")
+# Display the data frame
+print(danceability_df)
+write_csv(danceability_df, "data/00-simulated_data/danceability_data.csv")

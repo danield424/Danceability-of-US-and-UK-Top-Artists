@@ -1,13 +1,13 @@
 ---
-title: "My title"
-subtitle: "My subtitle if needed"
+title: "Danceability of US and UK Top Artists"
 author: 
-  - First author
-  - Another author
-thanks: "Code and data are available at: [https://github.com/RohanAlexander/starter_folder](https://github.com/RohanAlexander/starter_folder)."
+  - Aman Rana
+  - Daniel Du
+  - Michelle Ji
+thanks: "Code and data are available at: [https://github.com/danield424/Danceability-of-US-and-UK-Top-Artists](https://github.com/danield424/Danceability-of-US-and-UK-Top-Artists)."
 date: today
 date-format: long
-abstract: "First sentence. Second sentence. Third sentence. Fourth sentence."
+abstract: "Album data from the top three artists in the United States and the United Kingdom is analyzed in this report. The focus of the album data analysis is on key music features that can be of importance to artists when marketing their music and gauging their audience. Data is used from @billboard and @musicmetricsvault. Overall, we find that the top three artists in the United Kingdom have higher danceability levels than the top three artists in the United States, potentially indicating the music listeners in the United Kingdom may value higher danceability."
 format: pdf
 number-sections: true
 bibliography: references.bib
@@ -19,236 +19,131 @@ bibliography: references.bib
 #| message: false
 
 library(tidyverse)
-library(palmerpenguins)
 ```
 
 
 # Introduction
 
-Overview paragraph
-
-Estimand paragraph
-
-Results paragraph
-
-Why it matters paragraph
-
-Telegraphing paragraph: The remainder of this paper is structured as follows. @sec-data....
-
-
-
-
+The music industry continues to increase significance in everyday life, from listening to music on a daily commute to school or work to music played in stores. Culture and region also plays a role in what artists and songs are popular, as seen with various Billboard 100 lists from different countries. This paper examines the difference between music listening in the United States and the United Kingdom, focusing on danceability as the main component for music listening habits. Our findings highlight key features of music that artists could use to see what is popular with their listeners the most, depending if they are a more popular artist in a specific region. The paper is broken down into various sections. @sec-data explores the data, highlighting certain key aspects of the danceability of artists’ albums over the years. @sec-results introduces observations and potential conclusions from the data analysis.
 
 
 # Data {#sec-data}
 
-## Overview
+We use @citeR and @tidyverse. We pull @spotify artist audio features data using @spotifyr a wrapper around Spotify’s API. We find the top three US artists from @billboard and the top three artists in the UK from @musicmetricsvault. We drop Chappell Roan as a top three candidate because of her short album history. The artists’ danceability are averaged out to create country-level danceability averages over time.
 
-We use the statistical programming language R [@citeR].... Our data [@shelter].... Following @tellingstories, we consider...
-
-Overview text
-
-## Measurement
-	
-Some paragraphs about how we go from a phenomena in the world to an entry in the dataset.
-
-## Outcome variables
-
-Add graphs, tables and text. Use sub-sub-headings for each outcome variable or update the subheading to be singular.
-
+```{r, include=FALSE}
+# Read in data 
+#| echo: false
+sabrina_carpenter <- read_rds("../data/01-raw_data/sabrina_carpenter.rds")
+taylor_swift <- read_rds("../data/01-raw_data/taylor_swift.rds")
+billie_eilish <- read_rds("../data/01-raw_data/billie_eilish.rds")
+dua_lipa <- read_rds("../data/01-raw_data/dua_lipa.rds")
+ed_sheeran <- read_rds("../data/01-raw_data/ed_sheeran.rds")
+adele <- read_rds("../data/01-raw_data/adele.rds")
+```
 
 
-Some of our data is of penguins (@fig-bills), from @palmerpenguins.
 
 ```{r}
-#| label: fig-bills
-#| fig-cap: Bills of penguins
 #| echo: false
-
-ggplot(penguins, aes(x = island, fill = species)) +
-  geom_bar(alpha = 0.8) +
-  scale_fill_manual(values = c("darkorange","purple","cyan4"),
-                    guide = "none") +
+#| label: fig-1
+#| warning: false
+#| 
+rbind(sabrina_carpenter, billie_eilish, taylor_swift) |>
+  drop_na() |>
+  select(artist_name, album_release_date, danceability) |>
+  mutate(album_release_date = ymd(album_release_date)) |>
+  group_by(album_release_date) |>
+  summarize(danceability = mean(danceability)) |> 
+  ggplot(aes(x = album_release_date, y = danceability)) +
+  geom_point(alpha = 0.3) +
+  geom_smooth() +
   theme_minimal() +
-  facet_wrap(~species, ncol = 1) +
-  coord_flip()
+  labs(
+    x = "Album release date",
+    y = "Average Danceability",
+    title = "Average Danceability Trend of Current Top 3 US Artists"
+  ) +
+  theme(legend.position = "none")
 ```
 
-Talk more about it.
 
-And also planes (@fig-planes). (You can change the height and width, but don't worry about doing that until you have finished every other aspect of the paper - Quarto will try to make it look nice and the defaults usually work well once you have enough text.)
+
+
+
+
 
 ```{r}
-#| label: fig-planes
-#| fig-cap: Relationship between wing length and width
 #| echo: false
+#| label: fig-2
 #| warning: false
-#| message: false
-
-analysis_data <- read_csv(here::here("data/02-analysis_data/analysis_data.csv"))
-
-analysis_data |> 
-  ggplot(aes(x = width, y = length)) +
-  geom_point(alpha = 0.8) +
+rbind(ed_sheeran, dua_lipa, adele) |>
+  drop_na() |>
+  select(artist_name, album_release_date, danceability) |>
+  mutate(album_release_date = ymd(album_release_date)) |>
+  group_by(album_release_date) |>
+  summarize(danceability = mean(danceability)) |> 
+  ggplot(aes(x = album_release_date, y = danceability)) +
+  geom_point(alpha = 0.3) +
+  geom_smooth() +
   theme_minimal() +
-  labs(x = "Wing width (mm)",
-       y = "Wing length (mm)")
-```
-
-Talk way more about it. 
-
-## Predictor variables
-
-Add graphs, tables and text.
-
-Use sub-sub-headings for each outcome variable and feel free to combine a few into one if they go together naturally.
-
-
-
-
-
-
-
-
-# Model
-
-The goal of our modelling strategy is twofold. Firstly,...
-
-Here we briefly describe the Bayesian analysis model used to investigate... Background details and diagnostics are included in [Appendix -@sec-model-details].
-
-## Model set-up
-
-Define $y_i$ as the number of seconds that the plane remained aloft. Then $\beta_i$ is the wing width and $\gamma_i$ is the wing length, both measured in millimeters.  
-
-\begin{align} 
-y_i|\mu_i, \sigma &\sim \mbox{Normal}(\mu_i, \sigma) \\
-\mu_i &= \alpha + \beta_i + \gamma_i\\
-\alpha &\sim \mbox{Normal}(0, 2.5) \\
-\beta &\sim \mbox{Normal}(0, 2.5) \\
-\gamma &\sim \mbox{Normal}(0, 2.5) \\
-\sigma &\sim \mbox{Exponential}(1)
-\end{align}
-
-We run the model in R [@citeR] using the `rstanarm` package of @rstanarm. We use the default priors from `rstanarm`.
-
-
-### Model justification
-
-We expect a positive relationship between the size of the wings and time spent aloft. In particular...
-
-We can use maths by including latex between dollar signs, for instance $\theta$.
-
-
-# Results
-
-Our results are summarized in @tbl-modelresults.
-
-```{r}
-#| echo: false
-#| eval: true
-#| warning: false
-#| message: false
-
-library(rstanarm)
-
-first_model <-
-  readRDS(file = here::here("models/first_model.rds"))
+  labs(
+    x = "Album release date",
+    y = "Average Danceability",
+    title = "Average Danceability Trend of Current Top 3 UK Artists"
+  ) +
+  theme(legend.position = "none")
 ```
 
 ```{r}
 #| echo: false
-#| eval: true
-#| label: tbl-modelresults
-#| tbl-cap: "Explanatory models of flight time based on wing width and wing length"
+#| label: fig-3
 #| warning: false
 
-modelsummary::modelsummary(
-  list(
-    "First model" = first_model
-  ),
-  statistic = "mad",
-  fmt = 2
-)
+# average danceability for the US artists
+USTop3 <- rbind(sabrina_carpenter, billie_eilish, taylor_swift) |>
+  drop_na() |>
+  select(artist_name, album_release_date, danceability) |>
+  mutate(album_release_date = ymd(album_release_date)) |>
+  group_by(album_release_date) |>
+  summarize(danceability = mean(danceability)) |>
+  mutate(group = "US Top 3")
+
+# average danceability for the UK artists
+UKTop3 <- rbind(ed_sheeran, dua_lipa, adele) |>
+  drop_na() |>
+  select(artist_name, album_release_date, danceability) |>
+  mutate(album_release_date = ymd(album_release_date)) |>
+  group_by(album_release_date) |>
+  summarize(danceability = mean(danceability)) |>
+  mutate(group = "UK Top 3")
+
+# Combine the two groups
+combined_groups <- bind_rows(USTop3, UKTop3)
+
+# Plot the combined data with a single trendline for each group
+ggplot(combined_groups, aes(x = album_release_date, y = danceability, color = group)) +
+  geom_point(alpha = 0.3) +
+  geom_smooth() +
+  theme_minimal() +
+  labs(
+    x = "Album release date",
+    y = "Average Danceability",
+    color = "Group",
+    title = "Danceability Trend of US and UK Artists"
+  ) +
+  scale_color_brewer(palette = "Set1") +
+  theme(legend.position = "bottom")
 ```
 
 
 
-
-# Discussion
-
-## First discussion point {#sec-first-point}
-
-If my paper were 10 pages, then should be be at least 2.5 pages. The discussion is a chance to show off what you know and what you learnt from all this. 
-
-## Second discussion point
-
-Please don't use these as sub-heading labels - change them to be what your point actually is.
-
-## Third discussion point
-
-## Weaknesses and next steps
-
-Weaknesses and next steps should also be included.
 
 \newpage
 
-\appendix
+# Results {#sec-results}
 
-# Appendix {-}
-
-
-# Additional data details
-
-# Model details {#sec-model-details}
-
-## Posterior predictive check
-
-In @fig-ppcheckandposteriorvsprior-1 we implement a posterior predictive check. This shows...
-
-In @fig-ppcheckandposteriorvsprior-2 we compare the posterior with the prior. This shows... 
-
-```{r}
-#| eval: true
-#| echo: false
-#| message: false
-#| warning: false
-#| label: fig-ppcheckandposteriorvsprior
-#| layout-ncol: 2
-#| fig-cap: "Examining how the model fits, and is affected by, the data"
-#| fig-subcap: ["Posterior prediction check", "Comparing the posterior with the prior"]
-
-pp_check(first_model) +
-  theme_classic() +
-  theme(legend.position = "bottom")
-
-posterior_vs_prior(first_model) +
-  theme_minimal() +
-  scale_color_brewer(palette = "Set1") +
-  theme(legend.position = "bottom") +
-  coord_flip()
-```
-
-## Diagnostics
-
-@fig-stanareyouokay-1 is a trace plot. It shows... This suggests...
-
-@fig-stanareyouokay-2 is a Rhat plot. It shows... This suggests...
-
-```{r}
-#| echo: false
-#| eval: true
-#| message: false
-#| warning: false
-#| label: fig-stanareyouokay
-#| fig-cap: "Checking the convergence of the MCMC algorithm"
-#| fig-subcap: ["Trace plot", "Rhat plot"]
-#| layout-ncol: 2
-
-plot(first_model, "trace")
-
-plot(first_model, "rhat")
-```
-
+We find that the top three artists from the United Kingdom, which include Dua Lipa, Ed Sheeran, and Adele, tend to have higher danceability levels than the top three artists from the United States, which include Sabrina Carpenter, Taylor Swift, and Billie Eilish. @fig-1 details the average danceability across the top three United States artists. @fig-2 shows the average danceability across the top three United Kingdom artists. @fig-3 highlights the average danceability of top three artists in both the US and the UK. From this graph, we can see that the UK top three artists have higher average danceability levels than the US. 
 
 
 \newpage
