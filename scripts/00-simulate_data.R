@@ -28,10 +28,9 @@ for (artist in artists) {
   )
 }
 
-# Combine all artist data into one data frame
+# Combine all artist data into one data frame and display it
 danceability_df <- do.call(rbind, data_list)
 row.names(danceability_df) <- NULL
 
-# Display the data frame
 print(danceability_df)
 write_csv(danceability_df, "data/00-simulated_data/danceability_data.csv")
