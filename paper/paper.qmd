@@ -48,7 +48,9 @@ adele <- read_rds("../data/01-raw_data/adele.rds")
 #| echo: false
 #| label: fig-1
 #| warning: false
-#| 
+#| fig-cap: The average danceability over time of the songs of the current top 3 US Artists Billie Eilish, Taylor Swift, and Sabrina Carpenter.
+#| out-width: 90%
+
 rbind(sabrina_carpenter, billie_eilish, taylor_swift) |>
   drop_na() |>
   select(artist_name, album_release_date, danceability) |>
@@ -77,6 +79,9 @@ rbind(sabrina_carpenter, billie_eilish, taylor_swift) |>
 #| echo: false
 #| label: fig-2
 #| warning: false
+#| fig-cap: The average danceability over time of the songs of the current top 3 UK Artists Ed Sheeran, Dua Lipa, and Adele.
+#| out-width: 87%
+
 rbind(ed_sheeran, dua_lipa, adele) |>
   drop_na() |>
   select(artist_name, album_release_date, danceability) |>
@@ -99,6 +104,9 @@ rbind(ed_sheeran, dua_lipa, adele) |>
 #| echo: false
 #| label: fig-3
 #| warning: false
+#| fig-cap: The average danceability over time of the combined songs of both the current top 3 US and UK Artists, compared.
+#| fig-align: "center"
+#| out-width: 87%
 
 # average danceability for the US artists
 USTop3 <- rbind(sabrina_carpenter, billie_eilish, taylor_swift) |>
@@ -144,9 +152,6 @@ ggplot(combined_groups, aes(x = album_release_date, y = danceability, color = gr
 # Results {#sec-results}
 
 We find that the top three artists from the United Kingdom, which include Dua Lipa, Ed Sheeran, and Adele, tend to have higher danceability levels than the top three artists from the United States, which include Sabrina Carpenter, Taylor Swift, and Billie Eilish. @fig-1 details the average danceability across the top three United States artists. @fig-2 shows the average danceability across the top three United Kingdom artists. @fig-3 highlights the average danceability of top three artists in both the US and the UK. From this graph, we can see that the UK top three artists have higher average danceability levels than the US. 
-
-
-\newpage
 
 
 # References
